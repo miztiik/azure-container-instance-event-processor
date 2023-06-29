@@ -1,14 +1,14 @@
-# Efficient Processing of Events Using Container Apps in Azure
+# Efficient Processing of Events Using Container Instance in Azure
 
-Mystique Enterprises operates multiple web stores that generate a significant number of events related to sales and inventory. These events need to be processed in a timely and efficient manner. Mystique Enterprises is exploring the use of container apps to handle the event processing workload, enabling scalability and performance optimization. They seek a solution that allows them to seamlessly process store events, while ensuring data integrity and compliance. The goal is to streamline the event processing workflow and achieve faster, reliable, and cost-effective processing of store events without spending time and effort on infrastructure management.
+Mystique Enterprises operates multiple web stores that generate a significant number of events related to sales and inventory. These events need to be processed in a timely and efficient manner. Mystique Enterprises is exploring the use of container instance to handle the event processing workload, enabling scalability and performance optimization. They seek a solution that allows them to seamlessly process store events, while ensuring data integrity and compliance. The goal is to streamline the event processing workflow and achieve faster, reliable, and cost-effective processing of store events without spending time and effort on infrastructure management.
 
 Can you provide guidance on how to accomplish this?
 
 ## 🎯 Solution
 
-To achieve efficient processing of events, Mystique Enterprises can utilize Azure Service Bus for reliable event messaging. They can containerize their event processing logic using Container Apps and store the container images in Azure Container Registry. The events can be persisted in Blob storage and Cosmos DB for data storage and management. To ensure secure and controlled access to resources, a Managed Identity can be used. Monitoring for metrics and performance can be implemented using Azure Monitor. This solution enables seamless event processing, scalability, data integrity, and compliance for Mystique Enterprises.
+To achieve efficient processing of events, Mystique Enterprises can utilize Azure Service Bus for reliable event messaging. They can containerize their event processing logic using Container Instance and store the container images in Azure Container Registry. The events can be persisted in Blob storage and Cosmos DB for data storage and management. To ensure secure and controlled access to resources, a Managed Identity can be used. Monitoring for metrics and performance can be implemented using Azure Monitor. This solution enables seamless event processing, scalability, data integrity, and compliance for Mystique Enterprises.
 
-![Miztiik Automation - Efficient Processing of Events Using Container Apps in Azure](images/miztiik_architecture_container_apps_001.png)
+![Miztiik Automation - Efficient Processing of Events Using Container Instance in Azure](images/miztiik_architecture_container_instance_event_processor_001.png)
 
 1. ## 🧰 Prerequisites
 
@@ -54,19 +54,19 @@ To achieve efficient processing of events, Mystique Enterprises can utilize Azur
      - **Azure Cosmos DB**
         - This will be used by the Azure Function to store the events data
      - **Azure Service Bus Queue**
-        - A namespace and a queue will be created. The Azure container apps will use this queue to publish and retrieve events
+        - A namespace and a queue will be created. The Azure container instance will use this queue to publish and retrieve events
      - **Azure Container Registry**
         - To host the producer and consumer container images
         - The build scripts at `app/container_builds/event_processor_for_svc_bus_queues/build_and_push_img.sh` will build the container images and push them to ACR.
-        - To streamline the deployment process <ins>without</ins> using DevOps pipelines, the container image needs to be built locally and pushed to ACR using the above script. However, this approach requires separate deployment of the container apps, which will be addressed in the next iteration. It's important to note that the initial deployment will <ins>fail</ins> due to missing images. Once the images are available, redeploy the main stack for a successful deployment.
-     - **Container Apps**
+        - To streamline the deployment process <ins>without</ins> using DevOps pipelines, the container image needs to be built locally and pushed to ACR using the above script. However, this approach requires separate deployment of the container instance, which will be addressed in the next iteration. It's important to note that the initial deployment will <ins>fail</ins> due to missing images. Once the images are available, redeploy the main stack for a successful deployment.
+     - **Container Instance**
         - **Producer**: Python Flask app with two routes 
           - `/` for index page - Will be used for health check and readiness probes
           - `/event-producer` customized to generate events and ingest them to service bus. The number of event to produce with each request can be configured through environment variable `TOT_MSGS_TO_PRODUCE` defaults to `15`
         - **Consumer**: Python Flask app with two routes 
           - `/` for index page - Will be used for health check and readiness probes
           - `/event-consumer` customized to consume events from service bus and store them in cosmos db. The number of event to consume with each request can be configured through environment variable `MAX_MSGS_TO_PROCESS` defaults to `10`
-        - **Note**: The container apps are configured to use the managed identity to access other resources. The managed identity is configured to have access to the service bus queue, storage account and cosmos db. To get this to work the environment variable `AZURE_CLIENT_ID` needs to be setup with the managed identity client id.
+        - **Note**: The container instance are configured to use the managed identity to access other resources. The managed identity is configured to have access to the service bus queue, storage account and cosmos db. To get this to work the environment variable `AZURE_CLIENT_ID` needs to be setup with the managed identity client id.
 
       Initiate the deployment with the following command,
 
@@ -82,7 +82,7 @@ To achieve efficient processing of events, Mystique Enterprises can utilize Azur
    - **Trigger the Event Producer function**
 
       ```bash
-      PRODUCER_URL="https://c-app-event-producer-ne-007.mangodesert-5dd578ef.northeurope.azurecontainerapps.io/event-producer"
+      PRODUCER_URL="containerinst-ne-store-ops-001-producer.northeurope.azurecontainer.io/event-producer"
       for i in {1..10}
       do
       echo "Sending event batch $i"
@@ -106,18 +106,15 @@ To achieve efficient processing of events, Mystique Enterprises can utilize Azur
 
       As we are batching the upload of telemetry data to application insights, It takes few minutes for the data to show up there. You can check the `Live Metrics` section of the `store-events-producer-fn` function app. 
 
-      ![Miztiik Automation - Efficient Processing of Events Using Container Apps in Azure](images/miztiik_architecture_container_apps_002.png)
-      ![Miztiik Automation - Efficient Processing of Events Using Container Apps in Azure](images/miztiik_architecture_container_apps_003.png)
-      ![Miztiik Automation - Efficient Processing of Events Using Container Apps in Azure](images/miztiik_architecture_container_apps_004.png)
-      ![Miztiik Automation - Efficient Processing of Events Using Container Apps in Azure](images/miztiik_architecture_container_apps_005.png)
-      ![Miztiik Automation - Efficient Processing of Events Using Container Apps in Azure](images/miztiik_architecture_container_apps_006.png)
-      ![Miztiik Automation - Efficient Processing of Events Using Container Apps in Azure](images/miztiik_architecture_container_apps_007.png)
-      ![Miztiik Automation - Efficient Processing of Events Using Container Apps in Azure](images/miztiik_architecture_container_apps_008.png)
-      ![Miztiik Automation - Efficient Processing of Events Using Container Apps in Azure](images/miztiik_architecture_container_apps_009.png)
+      ![Miztiik Automation - Efficient Processing of Events Using Container Instance in Azure](images/miztiik_architecture_container_instance_event_processor_002.png)
+      ![Miztiik Automation - Efficient Processing of Events Using Container Instance in Azure](images/miztiik_architecture_container_instance_event_processor_003.png)
+      ![Miztiik Automation - Efficient Processing of Events Using Container Instance in Azure](images/miztiik_architecture_container_instance_event_processor_004.png)
+      ![Miztiik Automation - Efficient Processing of Events Using Container Instance in Azure](images/miztiik_architecture_container_instance_event_processor_005.png)
+     
 
    - **Trigger the Event Consumer function**
       ```bash
-      CONSUMER_URL="https://c-app-event-consumer-ne-007.mangodesert-5dd578ef.northeurope.azurecontainerapps.io/event-consumer"
+      CONSUMER_URL="containerinst-ne-store-ops-001-consumer.northeurope.azurecontainer.io/event-consumer"
       for i in {1..10}
       do
       echo "Receive event batch $i"
@@ -126,14 +123,14 @@ To achieve efficient processing of events, Mystique Enterprises can utilize Azur
       done
       ```     
 
-      ![Miztiik Automation - Efficient Processing of Events Using Container Apps in Azure](images/miztiik_architecture_container_apps_010.png)
-      ![Miztiik Automation - Efficient Processing of Events Using Container Apps in Azure](images/miztiik_architecture_container_apps_011.png)
-      ![Miztiik Automation - Efficient Processing of Events Using Container Apps in Azure](images/miztiik_architecture_container_apps_012.png)
-      ![Miztiik Automation - Efficient Processing of Events Using Container Apps in Azure](images/miztiik_architecture_container_apps_013.png)
+      ![Miztiik Automation - Efficient Processing of Events Using Container Instance in Azure](images/miztiik_architecture_container_instance_event_processor_006.png)
+      ![Miztiik Automation - Efficient Processing of Events Using Container Instance in Azure](images/miztiik_architecture_container_instance_event_processor_007.png)
+      ![Miztiik Automation - Efficient Processing of Events Using Container Instance in Azure](images/miztiik_architecture_container_instance_event_processor_008.png)
+
 
 6. ## 📒 Conclusion
 
-    In conclusion, this blog highlights the benefits of using container apps in Azure for efficient event processing. By leveraging containerization and Azure services, such as Azure Service Bus, Container Registry, Blob, and Cosmos, Miztiik Enterprises can streamline their event processing workflow, ensuring scalability, reliability, and cost-effectiveness. The use of managed identity and monitoring for metrics further enhances the security and observability of the containerized solution. With this approach, Miztiik Enterprises can optimize their event-driven architecture, achieve faster processing of store events, and eliminate the need for manual infrastructure management.
+    In conclusion, this blog highlights the benefits of using container instance in Azure for efficient event processing. By leveraging containerization and Azure services, such as Azure Service Bus, Container Registry, Blob, and Cosmos, Miztiik Enterprises can streamline their event processing workflow, ensuring scalability, reliability, and cost-effectiveness. The use of managed identity and monitoring for metrics further enhances the security and observability of the containerized solution. With this approach, Miztiik Enterprises can optimize their event-driven architecture, achieve faster processing of store events, and eliminate the need for manual infrastructure management.
   
 7. ## 🧹 CleanUp
 

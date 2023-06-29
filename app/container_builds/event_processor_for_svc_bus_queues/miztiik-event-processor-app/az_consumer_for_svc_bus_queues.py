@@ -16,7 +16,8 @@ RED_COLOR = "\033[31m"
 RESET_COLOR = "\033[0m"
 
 # Example usage with logging
-logging.info(f'{GREEN_COLOR}This is green text{RESET_COLOR}')
+logging.getLogger().setLevel(logging.INFO)
+logging.info(f'{GREEN_COLOR}Miztiik Automation In Progress{RESET_COLOR}')
 
 
 class GlobalArgs:

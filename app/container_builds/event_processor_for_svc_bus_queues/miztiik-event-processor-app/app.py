@@ -19,7 +19,9 @@ def index():
     _resp = make_response(render_template(
         'index.html', hostname=hostname, ip_address=ip_address, current_date=current_date))
     _resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    _resp.headers['X-Response-Tag'] = f"{os.getenv('APP_ROLE')} on {hostname} at {current_date}"
     _resp.headers['X-Miztiik-Automation'] = 'True'
+    _resp.headers['X-Brand-Tag'] = 'Empowering Innovations & Equitable Growth'
     return _resp
 
 

@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.18.4.5664",
-      "templateHash": "9741588038615780576"
+      "templateHash": "2937919396279937551"
     }
   },
   "parameters": {
@@ -2011,7 +2011,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.18.4.5664",
-              "templateHash": "3088122707112207096"
+              "templateHash": "5224142797984257179"
             }
           },
           "parameters": {
@@ -2073,9 +2073,6 @@
               "name": "[format('{0}-producer', variables('_c_grp_name'))]",
               "location": "[parameters('deploymentParams').location]",
               "tags": "[parameters('tags')]",
-              "zones": [
-                "1"
-              ],
               "identity": {
                 "type": "UserAssigned",
                 "userAssignedIdentities": {
@@ -2091,6 +2088,10 @@
                         {
                           "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
                           "value": "[reference(resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName')), '2022-10-01').customerId]"
+                        },
+                        {
+                          "name": "APP_ROLE",
+                          "value": "producer"
                         },
                         {
                           "name": "SVC_BUS_FQDN",
@@ -2137,13 +2138,13 @@
                 "diagnostics": {
                   "logAnalytics": {
                     "logType": "ContainerInsights",
-                    "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]",
+                    "workspaceId": "[reference(resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName')), '2022-10-01').customerId]",
                     "workspaceKey": "[listKeys(resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName')), '2022-10-01').primarySharedKey]"
                   }
                 },
                 "ipAddress": {
                   "type": "Public",
-                  "dnsNameLabel": "[variables('_c_grp_name')]",
+                  "dnsNameLabel": "[format('{0}-producer', variables('_c_grp_name'))]",
                   "ports": [
                     {
                       "port": 80,
@@ -2159,9 +2160,6 @@
               "name": "[format('{0}-consumer', variables('_c_grp_name'))]",
               "location": "[parameters('deploymentParams').location]",
               "tags": "[parameters('tags')]",
-              "zones": [
-                "1"
-              ],
               "identity": {
                 "type": "UserAssigned",
                 "userAssignedIdentities": {
@@ -2177,6 +2175,10 @@
                         {
                           "name": "AZURE_CLIENT_ID",
                           "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('uami_name_akane')), '2023-01-31').clientId]"
+                        },
+                        {
+                          "name": "APP_ROLE",
+                          "value": "consumer"
                         },
                         {
                           "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
@@ -2247,13 +2249,13 @@
                 "diagnostics": {
                   "logAnalytics": {
                     "logType": "ContainerInsights",
-                    "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]",
+                    "workspaceId": "[reference(resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName')), '2022-10-01').customerId]",
                     "workspaceKey": "[listKeys(resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName')), '2022-10-01').primarySharedKey]"
                   }
                 },
                 "ipAddress": {
                   "type": "Public",
-                  "dnsNameLabel": "[variables('_c_grp_name')]",
+                  "dnsNameLabel": "[format('{0}-consumer', variables('_c_grp_name'))]",
                   "ports": [
                     {
                       "port": 80,

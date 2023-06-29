@@ -22,4 +22,4 @@ EXPOSE 80
 
 # Run the command to start uWSGI
 # CMD ["gunicorn", "--bind", "0.0.0.0:80", "--log-level=debug" "app:app"]
-CMD ["gunicorn", "--bind", "0.0.0.0:80", "--workers", "4", "--timeout", "1200", "--access-logfile", "-", "--error-logfile", "-", "app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:80", "--workers", "8", "--timeout", "1200", "--access-logfile", "-", "--error-logfile", "-", "app:app"]

@@ -54,9 +54,7 @@ resource r_c_grp_producer 'Microsoft.ContainerInstance/containerGroups@2021-09-0
   name: '${_c_grp_name}-producer'
   location: deploymentParams.location
   tags: tags
-  zones: [
-    '1'
-  ]
+  // zones: [ '1' ] //"Availability Zones are not available in location: 'northeurope'
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {
@@ -72,6 +70,10 @@ resource r_c_grp_producer 'Microsoft.ContainerInstance/containerGroups@2021-09-0
             {
               name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
               value: r_logAnalyticsPayGWorkspace_ref.properties.customerId
+            }
+            {
+              name: 'APP_ROLE'
+              value: 'producer'
             }
             {
               name: 'SVC_BUS_FQDN'
@@ -118,14 +120,13 @@ resource r_c_grp_producer 'Microsoft.ContainerInstance/containerGroups@2021-09-0
     diagnostics: {
       logAnalytics: {
         logType: 'ContainerInsights'
-        workspaceId: r_logAnalyticsPayGWorkspace_ref.id
-        // customerId: r_logAnalyticsPayGWorkspace_ref.properties.customerId
+        workspaceId: r_logAnalyticsPayGWorkspace_ref.properties.customerId
         workspaceKey: r_logAnalyticsPayGWorkspace_ref.listKeys().primarySharedKey
       }
     }
     ipAddress: {
       type: 'Public'
-      dnsNameLabel: _c_grp_name
+      dnsNameLabel: '${_c_grp_name}-producer'
       ports: [
         {
           port: 80
@@ -140,9 +141,7 @@ resource r_c_grp_consumer 'Microsoft.ContainerInstance/containerGroups@2021-09-0
   name: '${_c_grp_name}-consumer'
   location: deploymentParams.location
   tags: tags
-  zones: [
-    '1'
-  ]
+  // zones: [ '1' ] //"Availability Zones are not available in location: 'northeurope'
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {
@@ -160,7 +159,10 @@ resource r_c_grp_consumer 'Microsoft.ContainerInstance/containerGroups@2021-09-0
               name: 'AZURE_CLIENT_ID'
               value: r_uami_container_app.properties.clientId
             }
-
+            {
+              name: 'APP_ROLE'
+              value: 'consumer'
+            }
             {
               name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
               value: r_logAnalyticsPayGWorkspace_ref.properties.customerId
@@ -230,14 +232,13 @@ resource r_c_grp_consumer 'Microsoft.ContainerInstance/containerGroups@2021-09-0
     diagnostics: {
       logAnalytics: {
         logType: 'ContainerInsights'
-        workspaceId: r_logAnalyticsPayGWorkspace_ref.id
-        // customerId: r_logAnalyticsPayGWorkspace_ref.properties.customerId
+        workspaceId: r_logAnalyticsPayGWorkspace_ref.properties.customerId
         workspaceKey: r_logAnalyticsPayGWorkspace_ref.listKeys().primarySharedKey
       }
     }
     ipAddress: {
       type: 'Public'
-      dnsNameLabel: _c_grp_name
+      dnsNameLabel: '${_c_grp_name}-consumer'
       ports: [
         {
           port: 80

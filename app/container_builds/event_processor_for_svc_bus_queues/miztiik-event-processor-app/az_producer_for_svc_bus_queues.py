@@ -21,7 +21,8 @@ RED_COLOR = "\033[31m"
 RESET_COLOR = "\033[0m"
 
 # Example usage with logging
-logging.info(f'{GREEN_COLOR}This is green text{RESET_COLOR}')
+logging.getLogger().setLevel(logging.INFO)
+logging.info(f'{GREEN_COLOR}Miztiik Automation In Progress{RESET_COLOR}')
 
 
 class GlobalArgs:
@@ -274,7 +275,7 @@ def write_to_svc_bus_q(data: dict, _attr):
                 _r = sender.send_messages(msg_to_send)
                 logging.debug(f"Message sent: {json.dumps(_r)}")
             logging.info(
-                f"Document with id {GREEN_COLOR}{data['id']}{RESET_COLOR} written to Service Bus Queue successfully")
+                f"Message with id {GREEN_COLOR}{data['id']}{RESET_COLOR} written to Service Bus Queue successfully")
             logging.debug(f"{_r}")
     except Exception as e:
         logging.exception(f"ERROR:{str(e)}")
